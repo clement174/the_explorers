@@ -160,6 +160,7 @@ class DataManager():
             Preprocess data. If transfer learning, need class of model to call .preprocess_input()
             If not, normalize
         """
+        X = X.astype('float32')
         if model_class:
 
             X = model_class.preprocess_input(X)
