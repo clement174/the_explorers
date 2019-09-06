@@ -27,7 +27,7 @@ import tensorflow as tf
 
 class TagModel(object):
 
-    def __init__(self, model_files_folder, user_top_k, score_threshold):
+    def __init__(self, user_top_k, score_threshold):
         """
             Define model files and parameters
             Args:
@@ -41,9 +41,9 @@ class TagModel(object):
         self.user_top_k = user_top_k
         self.score_threshold = score_threshold
         # model files
-        self.labelmap_path   = join(model_files_folder, "classes-trainable.txt")
-        self.dict_path       = join(model_files_folder, "class-descriptions.csv")
-        self.checkpoint_path = join(model_files_folder, "oidv2-resnet_v1_101.ckpt")
+        self.labelmap_path   = join(os.path.dirname(__file__), "model_files/classes-trainable.txt")
+        self.dict_path       = join(os.path.dirname(__file__), "model_files/class-descriptions.csv")
+        self.checkpoint_path = join(os.path.dirname(__file__), "model_files/oidv2-resnet_v1_101.ckpt")
 
 
     def load(self):
@@ -56,23 +56,21 @@ class TagModel(object):
         self.sess, self.input_values, self.predictions = self.load_model()
 
 
-    def generate_tags(self, image_filename):
+    def generate_tags(self, image):
         """
             Take an image an generate tag relative to the image
             Args:
-            - image_filename: path to the image the model generate tags for
+            - image: opened image
             Returns:
             - generated_tags: list of tag generated for image.
                               Each tag is an instance of Tag class and has a .name and .score attr
                               Max number of tags is defined by user_top_k
                               Tag's minimum score is defined by score_threshold
         """
-        # transform image
-        compressed_image = tf.gfile.FastGFile(image_filename, 'rb').read()
         # compute predictions (tags)
         predictions_eval = self.sess.run(
             self.predictions, feed_dict={
-                self.input_values: [compressed_image]
+                self.input_values: [image]
             })
         # sort predictions by score
         top_k = predictions_eval.argsort()[::-1]
@@ -91,7 +89,7 @@ class TagModel(object):
             score = predictions_eval[idx]
             #print('{:04d}: {} - {} (score = {:.2f})'.format(
                 #idx, mid, display_name, score))
-            tag = f"{display_name}-{score}"
+            tag = f"{display_name}_{score}"
             generated_tags.append(tag)
 
         return generated_tags

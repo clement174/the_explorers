@@ -7,12 +7,13 @@ def classify_image(image_path):
     """
 
     # prepare headers for http request
-    content_type = 'img_path/jpg'
+    content_type = 'image/jpg'
     headers = {'content-type': content_type}
 
     # send http request with image and receive response
     api_url = 'http://127.0.0.1:5000/predict'
-    response = requests.post(api_url, data=image_path, headers=headers)
+    image = open(image_path, 'rb').read()
+    response = requests.post(api_url, data=image, headers=headers)
 
     # decode response
     prediction = json.loads(response.content)
@@ -26,5 +27,5 @@ pred = classify_image(image_path)
 print("Class:", "Not implemented yet")
 print()
 for tag in pred:
-    name, score = tag.split("-")
+    name, score = tag.split("_")
     print(name, "-", score)
