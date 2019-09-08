@@ -1,0 +1,3 @@
+class ClassifModel(object):
+
+    pass
