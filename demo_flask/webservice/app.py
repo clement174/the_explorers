@@ -1,8 +1,7 @@
-from flask import Flask, request, Response, jsonify
+from flask import Flask, request, Response, jsonify, render_template
 import numpy as np
 import os
 from os.path import join
-
 
 from tag_model.TagModel import TagModel
 from classif_model.ClassifModel import ClassifModel
@@ -20,6 +19,10 @@ tag_model = TagModel(
 tag_model.load()
 
 # API entry point
+@app.route('/')
+def index():
+    return render_template("index.html")
+
 @app.route('/predict', methods=['POST'])
 def predict():
     """
