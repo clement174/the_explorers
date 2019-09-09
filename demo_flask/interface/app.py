@@ -1,4 +1,5 @@
 from flask import Flask, request, Response, jsonify, render_template, redirect
+from werkzeug.utils import secure_filename
 import numpy as np
 import os
 from os.path import join
@@ -7,10 +8,13 @@ import json
 
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = "static/images"
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 # API entry point
 @app.route('/')
-def index(label=None, tags=None):
+def index(label=None, tags=None, print_image=None):
+  
     return render_template("index.html")
 
 
@@ -21,8 +25,14 @@ def upload_image():
     if request.method == "POST":
         if request.files:
 
-            image = request.files["image"]
-            print(image)
+            # get image from form and save in static/images
+            image_f = request.files["image"]
+            image_name = secure_filename(image_f.filename)
+            image_f.save(os.path.join(app.config['UPLOAD_FOLDER'], image_name))
+
+            # save image
+            image = open(os.path.join(app.config['UPLOAD_FOLDER'], image_name), 'rb').read()
+            
             # prepare headers for http request
             content_type = 'image/jpg'
             headers = {'content-type': content_type}
@@ -35,15 +45,12 @@ def upload_image():
             # decode response
             prediction = json.loads(response.content)
 
-            tags = prediction['tags']
+            tags  = prediction['tags']
             label = prediction['label']
 
-            print(tags)
-            print()
-            print(label)
-
-            return render_template("index.html", label=label, tags=tags)
-
+            image_filename = os.path.join(app.config['UPLOAD_FOLDER'], image_name)
+            return render_template("index.html", label=label, tags=tags, print_image=image_filename)
+            
         return redirect("/")
 
     return redirect("/")

@@ -63,15 +63,20 @@
         <div class="jumbotron">
           <p id="result"><span class="mylabel">{{ label }}</span></p>
         </div>
+
+        {% if print_image %}
+          <div class="jumbotron">
+              <!-- <p><img id="output" width="500" src={{print_image}}></p> -->
+              <p><img id="output" width="500" src={{print_image}}></p>
+          </div>
+        {% endif %}
+
         <div class="jumbotron">
-        {% for tag in tags %}
+          {% for tag in tags %}
           <p id="result"><span class="tag">{{ tag[0] }}</span> ({{ tag[1] }})</p>
-        {% endfor %}
+          {% endfor %}
         </div>
-      {% else %}
-      <div class="jumbotron">
-        <p id="result">Get your prediction here!!!</p>
-      </div>
+       
       {% endif %}
 
 

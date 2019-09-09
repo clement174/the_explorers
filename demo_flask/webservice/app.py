@@ -33,8 +33,6 @@ def predict():
     tags, tags_scores = tag_model.generate_tags(image)
     label = classif_model.get_label(tags_scores)
 
-
-    print(tags)
     response = {
         'tags': tags,
         'label': label
