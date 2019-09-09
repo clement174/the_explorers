@@ -5,6 +5,7 @@ import os
 from os.path import join
 import requests
 import json
+import copy
 
 
 app = Flask(__name__)
@@ -14,7 +15,6 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 # API entry point
 @app.route('/')
 def index(label=None, tags=None, print_image=None):
-  
     return render_template("index.html")
 
 
@@ -32,14 +32,13 @@ def upload_image():
 
             # save image
             image = open(os.path.join(app.config['UPLOAD_FOLDER'], image_name), 'rb').read()
-            
+
             # prepare headers for http request
             content_type = 'image/jpg'
             headers = {'content-type': content_type}
 
             # send http request with image and receive response
             api_url = 'http://127.0.0.1:5000/predict'
-
             response = requests.post(api_url, data=image, headers=headers)
 
             # decode response
@@ -50,7 +49,7 @@ def upload_image():
 
             image_filename = os.path.join(app.config['UPLOAD_FOLDER'], image_name)
             return render_template("index.html", label=label, tags=tags, print_image=image_filename)
-            
+
         return redirect("/")
 
     return redirect("/")
