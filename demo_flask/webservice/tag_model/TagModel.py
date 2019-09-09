@@ -89,10 +89,10 @@ class TagModel(object):
             score = predictions_eval[idx]
             #print('{:04d}: {} - {} (score = {:.2f})'.format(
                 #idx, mid, display_name, score))
-            tag = f"{display_name}_{score}"
+            tag = (display_name, str(score))
             generated_tags.append(tag)
 
-        return generated_tags
+        return generated_tags, predictions_eval
 
 #-----------------------------------------------------------------------------------------
 # PRIVATE
