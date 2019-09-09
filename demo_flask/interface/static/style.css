@@ -70,3 +70,17 @@ body {
     }
 
   }
+
+  .mylabel {
+    font-size: 35px;
+    font-weight: lighter;
+  }
+
+  .tag {
+    font-size: 20px;
+    font-weight: bolder;
+  }
+
+  .custom-file-input {
+    margin-left: 40px;
+  }

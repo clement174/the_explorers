@@ -19,11 +19,7 @@ tag_model = TagModel(
 tag_model.load()
 
 # API entry point
-@app.route('/')
-def index():
-    return render_template("index.html")
-
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['GET', 'POST'])
 def predict():
     """
         Get request
@@ -34,8 +30,13 @@ def predict():
     r = request
     image = r.data
 
-    tags = tag_model.generate_tags(image)
-    response = { 'message': tags }
+    tags, tags_scores = tag_model.generate_tags(image)
+    label = classif_model.get_label(tags_scores)
+
+    response = {
+        'tags': tags,
+        'label': label
+     }
 
     return jsonify(response)
 
